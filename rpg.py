@@ -31,14 +31,20 @@ def showStatus():
     # print what the player is carrying
     print('Inventory:', inventory)
     # check if there's an item in the room, if so print it
-    if "item" in rooms[currentRoom]:
+    if "item" in rooms[currentRoom] and len(rooms[currentRoom]["item"]) > 0:
         print(f'You see a {rooms[currentRoom]["item"]} you can get')
+    elif "item" in rooms[currentRoom] and len(rooms[currentRoom]["item"]) == 0:
+        print('You\'ve already collected the items in this room')
     # check if theres an object in the room, you can use, if so print it.
-    if "use" in rooms[currentRoom]:
+    if "use" in rooms[currentRoom] and len(rooms[currentRoom]["item"]) > 0:
         print(f'You see a {rooms[currentRoom]["use"]} you can use')
+    elif "use" in rooms[currentRoom] and len(rooms[currentRoom]["use"]) > 0:
+        print('You\'ve already collected used the objects in this room')
     # check if theres a monster in the room, you can approach, if so print it.
-    if "monster" in rooms[currentRoom]:
+    if "monster" in rooms[currentRoom] and 'complete' not in rooms[currentRoom]['monster']:
         print(f'You see a monster: {rooms[currentRoom]["monster"]}')
+    else:
+        print("You've already defeated this rooms monster")
 
     print("---------------------------")
 
@@ -58,14 +64,14 @@ def main():
                         'north' : 'Attic',
                         'northeast' : 'Bathroom',
                         'east' : 'Office',
-                        'west' : 'Your Bedroom',
-                        'northwest' : 'Master Bedroom',
+                        'northwest' : 'Your Bedroom',
+                        'west' : 'Master Bedroom',
                         'south' : 'Stairs'
                         }
                     },
                 'Attic' : {
                     'directions' : {
-                        'north' : 'Upstairs Hall'
+                        'south' : 'Upstairs Hall'
                         },
                     'use' : ['lever'], #trapdoor to Downstairs Hall
                     },
@@ -83,7 +89,7 @@ def main():
                 'Bathroom' : {
                     'directions' : {
                         'southwest' : 'Upstairs Hall',
-                        'south' : 'Mirror to Otherside '
+                        'south' : 'Mirror Otherside'
                         },
                     'need' : ['riddle answer']
                     },
@@ -150,11 +156,11 @@ def main():
                         },
                     'use' : ['power switch'],
                     },
-                'Otherside' : {
+                'Mirror Otherside' : {
                     'directions': {
-                        'north' : 'Mirror to Bathroom'
+                        'north' : 'Bathroom'
                         },
-                    'item' : ['You found an empty secret room']
+                    'item' : ['You found satisfaction of a job well done']
                 }
             }
 
@@ -303,7 +309,7 @@ def main():
         if 'monster' in rooms[currentRoom]:
             # check if item in room has already been used.
             if 'complete' in rooms[currentRoom]['monster']:
-                print(f'You have already defeated {rooms[currentRoom]["monster"]}')
+                print(f'You have already defeated {rooms[currentRoom]["monster"][0]}')
 
             # monster in Backyard
             if currentRoom == 'Backyard':
@@ -311,7 +317,9 @@ def main():
                 if 'bone' in inventory:
                     print(f'{rooms[currentRoom]["monster"]} is distracted by a bone. An item is dropped.')
                     inventory.remove('bone')
+                    rooms[currentRoom]['monster'].append('complete')
                     rooms[currentRoom]['item'] = ['remote']
+                    showStatus()
                 else:
                     print('You need a bone for a distraction')
 
@@ -321,9 +329,11 @@ def main():
                 if 'full coffee mug' in inventory:
                     print(f'{rooms[currentRoom]["monster"]} is satisfied by coffee. An item is dropped.')
                     inventory.remove('full coffee mug')
+                    rooms[currentRoom]['monster'].append('complete')
                     rooms[currentRoom]['item'] = ['hulu password']
+                    showStatus()
                 else:
-                    print('You need to offer some full coffee mug to get the hulu password from Larry the Undead')
+                    print('You need to offer a full coffee mug to get the hulu password from Larry the Undead')
     
         ## Define how a player can win
         if currentRoom == 'Living Room' and 'remote' in inventory and 'hulu password' in inventory:
