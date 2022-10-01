@@ -41,9 +41,9 @@ def showStatus():
     elif "use" in rooms[currentRoom] and len(rooms[currentRoom]["use"]) > 0:
         print('You\'ve already collected used the objects in this room')
     # check if theres a monster in the room, you can approach, if so print it.
-    if "monster" in rooms[currentRoom] and 'complete' not in rooms[currentRoom]['monster']:
+    if "monster" in rooms[currentRoom] and 'complete' in rooms[currentRoom]['monster']:
         print(f'You see a monster: {rooms[currentRoom]["monster"]}')
-    else:
+    elif "monster" in rooms[currentRoom] and 'complete' not in rooms[currentRoom]['monster']:
         print("You've already defeated this rooms monster")
 
     print("---------------------------")
